@@ -103,7 +103,7 @@
 			<!--2、<param-value>/WEB-INF/classes/dispatcher-servlet.xml</param-value> -->
 			<!--3、<param-value>classpath*:dispatcher-servlet.xml</param-value> -->
 			<!--4、多个值用逗号分隔 -->
-			<param-value>classpath:spring/dispatcher-servlet.xml</param-value>
+			<param-value>/WEB-INF/config/applicationContext.xml</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup><!--是启动顺序，让这个Servlet随Servletp容器一起启动。 -->
 	</servlet>

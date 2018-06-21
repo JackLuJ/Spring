@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
 	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context.xsd
@@ -22,92 +23,127 @@
 	http://www.springframework.org/schema/aop
 	http://www.springframework.org/schema/aop/spring-aop.xsd
 	http://www.springframework.org/schema/util
-	http://www.springframework.org/schema/util/spring-util.xsd">
+	http://www.springframework.org/schema/util/spring-util.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
 	<!--Spring 容器初始化的时候，会扫描com.luanjun下 标有 (@Component,@Service,@Controller,@Repository) 
 		注解的 类 纳入spring容器管理 -->
-	<context:component-scan
-		base-package="com.luanjun"></context:component-scan>
+	<context:component-scan base-package="com.luanjun"></context:component-scan>
 
 	<!-- 引入jdbc配置文件 -->
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-				<value>classpath*:jdbc.properties</value>
+				<value>/WEB-INF/config/jdbc.properties</value>
 			</list>
 		</property>
 	</bean>
 
-	<!-- dataSource 配置 -->
-	<bean id="dataSource"
-		class="com.alibaba.druid.pool.DruidDataSource" init-method="init"
-		destroy-method="close">
-		<!-- 基本属性 url、user、password -->
-		<property name="url" value="${jdbc.url}" />
-		<property name="username" value="${jdbc.username}" />
-		<property name="password" value="${jdbc.password}" />
+	<!-- 对静态资源文件的访问 方案一 （二选一） -->
+	<!-- 使用"*.do"配置DispatcherServlet时不存在静态资源访问问题 ，拦截器将不会拦截静态资源的URL -->
+	<!-- 使用"/"配置DispatcherServlet时存在静态资源访问问题,采用以下两种方案解决 -->
+	<!-- ====================================== -->
+	<mvc:default-servlet-handler />
 
-		<!-- 配置初始化大小、最小、最大 -->
-		<property name="initialSize" value="1" />
-		<property name="minIdle" value="1" />
-		<property name="maxActive" value="20" />
+	<!-- 对静态资源文件的访问 方案二 （二选一） -->
+	<!-- ====================================== -->
+	<!-- 静态资源映射 -->
+	<!-- <mvc:resources mapping="/js/**" location="/WEB-INF/js/" /> -->
+	<!-- <mvc:resources mapping="/css/**" location="/WEB-INF/css/" /> -->
+	<!-- <mvc:resources mapping="/fonts/**" location="/WEB-INF/fonts/" /> -->
+	<!-- <mvc:resources mapping="/plugins/**" location="/WEB-INF/plugins/" /> -->
+	<!-- <mvc:resources mapping="images/**" location="/WEB-INF/images/" /> -->
 
-		<!-- 配置获取连接等待超时的时间 -->
-		<property name="maxWait" value="60000" />
+	<!-- 默认的注解映射的支持 -->
+	<!-- 采用这下面种方式将自动装配DefaultAnnotationHandlerMapping和AnnotationMethodHandlerAdapter -->
+	<!-- 采用这下面种方式将无法在 DefaultAnnotationHandlerMapping配置拦截器 -->
+	<!-- ====================================== -->
+	<mvc:annotation-driven />
 
-		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
-		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+	<!-- <mvc:interceptors>
+		<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<mvc:exclude-mapping path="/admin/**" />
+			<bean class="org.springframework.web.servlet.theme.ThemeChangeInterceptor" />
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/secure/*" />
+			<bean class="org.example.SecurityInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+	<mvc:interceptors>
+		<bean id="serverDataConverInterceptor"
+			class="com.anywide.web.framework.interceptor.AutoHandlerInterceptor">
+			<property name="clientUriPropertiesCenter" ref="clientUriPropertiesCenter"></property>
+			<property name="defaultParamType" value="httpType">
+			</property>
+		</bean>
+	</mvc:interceptors> -->
 
-		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
-		<property name="minEvictableIdleTimeMillis" value="300000" />
-
-		<property name="validationQuery" value="SELECT 'x'" />
-		<property name="testWhileIdle" value="true" />
-		<property name="testOnBorrow" value="false" />
-		<property name="testOnReturn" value="false" />
-
-		<!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
-		<property name="poolPreparedStatements" value="false" />
-		<property name="maxPoolPreparedStatementPerConnectionSize"
-			value="20" />
-
-		<!-- 配置监控统计拦截的filters -->
-		<property name="filters" value="stat" />
+	<!-- 视图渲染器 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+		id="internalResourceViewResolver">
+		<!-- 前缀 -->
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<!-- 后缀 -->
+		<property name="suffix" value=".jsp" />
 	</bean>
 
+	<!-- dataSource 配置 -->
+	<!-- <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" 
+		init-method="init" destroy-method="close"> 基本属性 url、user、password <property 
+		name="url" value="${jdbc.url}" /> <property name="username" value="${jdbc.username}" 
+		/> <property name="password" value="${jdbc.password}" /> 配置初始化大小、最小、最大 <property 
+		name="initialSize" value="1" /> <property name="minIdle" value="1" /> <property 
+		name="maxActive" value="20" /> 配置获取连接等待超时的时间 <property name="maxWait" value="60000" 
+		/> 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 <property name="timeBetweenEvictionRunsMillis" 
+		value="60000" /> 配置一个连接在池中最小生存的时间，单位是毫秒 <property name="minEvictableIdleTimeMillis" 
+		value="300000" /> <property name="validationQuery" value="SELECT 'x'" /> 
+		<property name="testWhileIdle" value="true" /> <property name="testOnBorrow" 
+		value="false" /> <property name="testOnReturn" value="false" /> 打开PSCache，并且指定每个连接上PSCache的大小 
+		<property name="poolPreparedStatements" value="false" /> <property name="maxPoolPreparedStatementPerConnectionSize" 
+		value="20" /> 配置监控统计拦截的filters <property name="filters" value="stat" /> </bean> -->
+
+	<!-- <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"> 
+		<property name="driverClass" value="${jdbc.driverClassName}" /> <property 
+		name="jdbcUrl" value="${jdbc.url}" /> <property name="user" value="${jdbc.username}" 
+		/> <property name="password" value="${jdbc.password}" /> <property name="autoCommitOnClose" 
+		value="true" /> <property name="checkoutTimeout" value="${cpool.checkoutTimeout}" 
+		/> <property name="initialPoolSize" value="${cpool.minPoolSize}" /> <property 
+		name="minPoolSize" value="${cpool.minPoolSize}" /> <property name="maxPoolSize" 
+		value="${cpool.maxPoolSize}" /> <property name="maxIdleTime" value="${cpool.maxIdleTime}" 
+		/> <property name="acquireIncrement" value="${cpool.acquireIncrement}" /> 
+		<property name="maxIdleTimeExcessConnections" value="${cpool.maxIdleTimeExcessConnections}" 
+		/> </bean> -->
+
 	<!-- mybatis文件配置，扫描所有mapper文件 -->
-	<bean id="sqlSessionFactory"
-		class="org.mybatis.spring.SqlSessionFactoryBean"
-		p:dataSource-ref="dataSource"
-		p:configLocation="classpath:mybatis-config.xml"
-		p:mapperLocations="classpath:com/eduoinfo/finances/bank/web/dao/*.xml" />
+	<!-- <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" 
+		p:dataSource-ref="dataSource" p:configLocation="classpath:mybatis-config.xml" 
+		p:mapperLocations="classpath:com/eduoinfo/finances/bank/web/dao/*.xml" /> -->
 
 	<!-- spring与mybatis整合配置，扫描所有dao -->
-	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"
-		p:basePackage="com.eduoinfo.finances.bank.web.dao"
-		p:sqlSessionFactoryBeanName="sqlSessionFactory" />
+	<!-- <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" p:basePackage="com.eduoinfo.finances.bank.web.dao" 
+		p:sqlSessionFactoryBeanName="sqlSessionFactory" /> -->
 
 	<!-- 对dataSource 数据源进行事务管理 -->
-	<bean id="transactionManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
-		p:dataSource-ref="dataSource" />
+	<!-- <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" 
+		p:dataSource-ref="dataSource" /> -->
 
 	<!-- 配置使Spring采用CGLIB代理 -->
-	<aop:aspectj-autoproxy proxy-target-class="true" />
+	<!-- <aop:aspectj-autoproxy proxy-target-class="true" /> -->
 
 	<!-- 启用对事务注解的支持 -->
-	<tx:annotation-driven
-		transaction-manager="transactionManager" />
+	<tx:annotation-driven transaction-manager="transactionManager" />
 
 	<!-- Cache配置 -->
-	<cache:annotation-driven
-		cache-manager="cacheManager" />
-	<bean id="ehCacheManagerFactory"
-		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
-		p:configLocation="classpath:ehcache.xml" />
-	<bean id="cacheManager"
-		class="org.springframework.cache.ehcache.EhCacheCacheManager"
-		p:cacheManager-ref="ehCacheManagerFactory" />
+	<!-- <cache:annotation-driven cache-manager="cacheManager" /> <bean id="ehCacheManagerFactory" 
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:configLocation="classpath:ehcache.xml" 
+		/> <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" 
+		p:cacheManager-ref="ehCacheManagerFactory" /> -->
 
 </beans>
