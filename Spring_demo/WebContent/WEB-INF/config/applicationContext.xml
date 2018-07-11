@@ -85,24 +85,22 @@
 	</mvc:interceptors> -->
 
 	<!-- 视图渲染器 -->
-	<!-- <bean
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-		id="internalResourceViewResolver">
-		前缀
-		<property name="prefix" value="/WEB-INF/jsp/" />
-		后缀
-		<property name="suffix" value=".jsp" />
-	</bean> -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" id="internalResourceViewResolver">
+		<!-- 前缀 -->
+		<property name="prefix" value="/WEB-INF/template/" />
+		<!-- 后缀 -->
+		<property name="suffix" value=".html" />
+	</bean>
 	
-	<bean id="freeMarkerConfigurer"
+	<!-- <bean id="freeMarkerConfigurer"
 		class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
-		<property name="templateLoaderPath" value="/WEB-INF/ftl/"></property>
+		<property name="templateLoaderPath" value="/WEB-INF/template/"></property>
 		<property name="defaultEncoding" value="utf-8" />
 		<property name="freemarkerSettings">
 			<props>
 				<prop key="template_update_delay">1</prop>
 				<prop key="locale">zh_CN</prop>
-				<prop key="datetime_format">yyyy-MM-dd</prop><!-- 时间格式化 -->
+				<prop key="datetime_format">yyyy-MM-dd</prop>时间格式化
 				<prop key="date_format">yyyy-MM-dd</prop>
 				<prop key="number_format">#.##</prop>
 			</props>
@@ -112,7 +110,7 @@
 	<bean id="freeMarkerViewResolver"
 		class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
 		<property name="cache" value="true" />
-		<property name="prefix" value="" /><!-- 上面已经配了，这里就不用配啦 -->
+		<property name="prefix" value="" />上面已经配了，这里就不用配啦
 		<property name="suffix" value=".ftl" />
 		<property name="contentType" value="text/html;charset=UTF-8" />
 		<property name="allowSessionOverride" value="true" />
@@ -121,7 +119,7 @@
 		<property name="exposeRequestAttributes" value="true" />
 		<property name="exposeSessionAttributes" value="true" />
 		<property name="requestContextAttribute" value="request" />
-	</bean>
+	</bean> -->
 
 	<!-- dataSource 配置 -->
 	<!-- <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" 
