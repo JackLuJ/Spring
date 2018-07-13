@@ -35,14 +35,14 @@ public class TestController extends BaseController {
 		return mv;
 	}
 	
-	@RequestMapping(value = "admin/index.html", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/index.html", method = RequestMethod.GET)
 	public ModelAndView index() {
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("index");
 		return mv;
 	}
 	
-	@RequestMapping(value = "first.html", method = RequestMethod.GET)
+	@RequestMapping(value = "/first.html", method = RequestMethod.GET)
 	public ModelAndView first() {
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("first");
