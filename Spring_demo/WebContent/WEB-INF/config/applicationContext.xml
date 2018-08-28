@@ -55,6 +55,7 @@
 	<!-- <mvc:resources mapping="/fonts/**" location="/WEB-INF/fonts/" /> -->
 	<!-- <mvc:resources mapping="/plugins/**" location="/WEB-INF/plugins/" /> -->
 	<!-- <mvc:resources mapping="images/**" location="/WEB-INF/images/" /> -->
+	<mvc:resources mapping="H-ui/**" location="/WEB-INF/H-ui/" />
 
 	<!-- 默认的注解映射的支持 -->
 	<!-- 采用这下面种方式将自动装配DefaultAnnotationHandlerMapping和AnnotationMethodHandlerAdapter -->
@@ -85,18 +86,16 @@
 	</mvc:interceptors> -->
 
 	<!-- 视图渲染器 -->
-	<!-- <bean
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-		id="internalResourceViewResolver">
+	<!-- <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" id="internalResourceViewResolver">
 		前缀
-		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="prefix" value="/WEB-INF/template/" />
 		后缀
-		<property name="suffix" value=".jsp" />
+		<property name="suffix" value=".html" />
 	</bean> -->
 	
 	<bean id="freeMarkerConfigurer"
 		class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
-		<property name="templateLoaderPath" value="/WEB-INF/ftl/"></property>
+		<property name="templateLoaderPath" value="/WEB-INF/template/"></property>
 		<property name="defaultEncoding" value="utf-8" />
 		<property name="freemarkerSettings">
 			<props>
@@ -113,7 +112,7 @@
 		class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
 		<property name="cache" value="true" />
 		<property name="prefix" value="" /><!-- 上面已经配了，这里就不用配啦 -->
-		<property name="suffix" value=".ftl" />
+		<property name="suffix" value=".html" />
 		<property name="contentType" value="text/html;charset=UTF-8" />
 		<property name="allowSessionOverride" value="true" />
 		<property name="allowRequestOverride" value="true" />
