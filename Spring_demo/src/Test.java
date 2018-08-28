@@ -6,4 +6,8 @@ public class Test {
 		sb.append("11");
 		sb.toString();
 	}
+	
+	public static void main(String[] args) {
+		
+	}
 }
