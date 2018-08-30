@@ -15,7 +15,13 @@ public class ProxyHandler implements InvocationHandler {
 		
 		System.out.println("准备工作!");
 		
-		Object object = method.invoke(proxied, args);
+		Object object = null;
+		try {
+			object = method.invoke(proxied, args);
+		} catch (Exception e) {
+			System.out.println("发生异常"+e.getCause().getMessage());
+			e.printStackTrace();
+		}
 		
 		System.out.println("工作结束!");
 		
