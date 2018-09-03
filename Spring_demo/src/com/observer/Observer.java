@@ -9,7 +9,7 @@ public class Observer implements IObserver {
 	}
 
 	@Override
-	public void refresh(String data) {
+	public void refresh(Object data) {
 		System.out.println(name+"接到通知:"+data);
 	}
 

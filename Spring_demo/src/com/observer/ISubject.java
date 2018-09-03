@@ -6,5 +6,5 @@ public interface ISubject {
 	
 	public void unregister(IObserver obs);
 	
-	public void notifyObservers(String data);
+	public void notifyObservers(Object data);
 }

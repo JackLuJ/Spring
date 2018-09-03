@@ -16,7 +16,7 @@ public class Subject implements ISubject {
 	}
 
 	@Override
-	public void notifyObservers(String data) {
+	public void notifyObservers(Object data) {
 		for(IObserver obs : list) {
 			obs.refresh(data);
 		}

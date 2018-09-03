@@ -1,5 +1,8 @@
 package com.observer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Test {
 
 	public static void main(String[] args) {
@@ -15,6 +18,10 @@ public class Test {
 		subject.notifyObservers("大家听好了!");
 		subject.notifyObservers("ww你出去!");
 		subject.unregister(ww);
+		Map<String, Object> map = new HashMap<>();
+		map.put("1", "昨天做完了什么");
+		map.put("2", "今天要做什么");
+		subject.notifyObservers(map);
 		subject.notifyObservers("继续开会!");
 	}
 
